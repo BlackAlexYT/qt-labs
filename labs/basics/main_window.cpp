@@ -149,7 +149,9 @@ void MainWindow::UpdateTickets(const size_t ticket_count) {
                 item->setBackground(Qt::black);
         }
     }
-    UpdateProgressBar();
+    if (ticket_count != 0) {
+        UpdateProgressBar();
+    }
 }
 
 void MainWindow::OnItemClicked(const QListWidgetItem* item) {
