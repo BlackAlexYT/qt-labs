@@ -6,8 +6,6 @@
 #define MAIN_WINDOW_H
 
 #include <QMainWindow>
-#include <qlistwidget.h>
-#include <qtextedit.h>
 
 enum class TicketStatus : std::uint8_t { Default, Yellow, Green };
 
@@ -27,6 +25,7 @@ class QComboBox;
 class QPushButton;
 class QProgressBar;
 class QTextEdit;
+class QListWidgetItem;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {

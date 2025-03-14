@@ -4,7 +4,6 @@
 
 #include "main_window.h"
 
-#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -72,7 +71,6 @@ void MainWindow::SetupLayout() {
         "QProgressBar {"
         "border: 2px solid grey;"
         "border-radius: 5px;"
-        "background-color: #FFFFFF;"
         "}"
         "QProgressBar::chunk {"
         "background: #32CD32;"
@@ -82,10 +80,9 @@ void MainWindow::SetupLayout() {
         "QProgressBar {"
         "border: 2px solid grey;"
         "border-radius: 5px;"
-        "background-color: #FFFFFF;"
         "}"
         "QProgressBar::chunk {"
-        "background: #FFFF00;"
+        "background: #FFD700;"
         "}");
     total_progress_->setAlignment(Qt::AlignCenter);
 
@@ -133,14 +130,15 @@ void MainWindow::UpdateTickets(const size_t ticket_count) {
     view_->clear();
     for (size_t i = 0; i < ticket_count_; i++) {
         auto* item = new QListWidgetItem(tickets_[i].name);
+
         item->setData(Qt::UserRole, static_cast<int>(i));
         view_->addItem(item);
         switch (tickets_[i].status) {
             case TicketStatus::Default:
-                item->setBackground(Qt::white);
+                // item->setBackground(Qt::gray);
                 break;
             case TicketStatus::Yellow:
-                item->setBackground(Qt::yellow);
+                item->setBackground(QColor("#FFD700"));
                 break;
             case TicketStatus::Green:
                 item->setBackground(Qt::green);
@@ -201,7 +199,7 @@ void MainWindow::OnItemDoubleClicked(const QListWidgetItem* item) {
 }
 
 void MainWindow::ChangeType(const int index) {
-    if (index != -1 && user_change_) {
+    if (index != -1 && user_change_ && std::size(tickets_) != 0) {
         tickets_[current_ticket_].status = static_cast<TicketStatus>(index);
         UpdateTickets(ticket_count_);
     }
@@ -312,4 +310,5 @@ void MainWindow::LoadTickets() {
     tickets_index_history_.clear();
     ticket_count_ = std::size(tickets_);
     UpdateTickets(ticket_count_);
+    count_->setValue(static_cast<int>(ticket_count_));
 }
