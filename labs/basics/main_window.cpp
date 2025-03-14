@@ -201,19 +201,6 @@ void MainWindow::OnItemDoubleClicked(const QListWidgetItem* item) {
 void MainWindow::ChangeType(const int index) {
     if (index != -1 && user_change_) {
         tickets_[current_ticket_].status = static_cast<TicketStatus>(index);
-        // switch (index) {
-        //     case 0:
-        //         tickets_[current_ticket_].status = TicketStatus::Default;
-        //         break;
-        //     case 1:
-        //         tickets_[current_ticket_].status = TicketStatus::Yellow;
-        //         break;
-        //     case 2:
-        //         tickets_[current_ticket_].status = TicketStatus::Green;
-        //         break;
-        //     default:
-        //         tickets_[current_ticket_].status = TicketStatus::Default;
-        // }
         UpdateTickets(ticket_count_);
     }
 }

@@ -16,6 +16,7 @@ qt_cc_library(
 qt_cc_binary(
     name = "basics",
     srcs = ["main.cpp"],
+    data = ["tickets.txt"],
     deps = [
         ":main_window",
         "@rules_qt//:qt_core",
