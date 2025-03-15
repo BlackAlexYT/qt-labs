@@ -18,7 +18,7 @@ qt_cc_library(
 )
 
 qt_cc_binary(
-    name = "basics1",
+    name = "basics_1",
     srcs = ["main.cpp"],
     data = ["settings.txt"],
     deps = [
