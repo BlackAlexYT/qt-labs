@@ -72,7 +72,7 @@ class MainWindow : public QMainWindow {
     size_t current_ticket_ = 0;
     size_t ticket_count_ = 0;
     bool user_change_ = true;
-    const QString filepath_ = "tickets.txt";
+    const QString filepath_ = "labs/basics/tickets.txt";
 };
 
 #endif  // MAIN_WINDOW_H

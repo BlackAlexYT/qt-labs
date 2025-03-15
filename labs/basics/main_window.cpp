@@ -267,7 +267,6 @@ void MainWindow::ChangeText() {
 }
 
 void MainWindow::SaveTickets() {
-    qDebug() << "Current working directory:" << QDir::currentPath();
     QFile file(filepath_);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "Open error:" << filepath_;
