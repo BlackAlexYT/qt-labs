@@ -20,6 +20,7 @@ qt_cc_library(
 qt_cc_binary(
     name = "basics1",
     srcs = ["main.cpp"],
+    data = ["settings.txt"],
     deps = [
         ":main_window",
         "@rules_qt//:qt_core",

@@ -19,13 +19,12 @@ class MainWindow : public QMainWindow {
    public:
     MainWindow(QWidget* parent = nullptr);
 
-    void AddField();
-
    private:
     QVBoxLayout* main_layout_;
     CalculatorController* controller_;
     QPushButton* button_;
     QVBoxLayout* main_layout1_;
+    QMenuBar* menu_bar_;
 
     std::vector<QString> units_ = {
       // Metrical
@@ -88,6 +87,12 @@ class MainWindow : public QMainWindow {
       {"pc", 3.240779289e-17},
 
       {"nmi", 0.000539957}};
+    QString filepath_ = "labs/basics_1/settings.txt";
+
+    void AddField();
+    void SaveSettings();
+    void LoadSettings();
+    void СlearAllFields();
 };
 
 #endif  // MAIN_WINDOW_H

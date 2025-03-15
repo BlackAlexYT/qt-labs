@@ -4,6 +4,11 @@
 
 #include "calculator_controller.h"
 
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <qlabel.h>
+#include <unordered_set>
+
 CalculatorController::CalculatorController(QObject* parent) : QObject(parent) {
 }
 
@@ -38,6 +43,27 @@ void CalculatorController::UpdateUnit(QLineEdit* edited, QString unit) {
             changed_field = &field;
         }
     }
+
+    if (units_.contains(unit)) {
+        changed_field->unit_->setCurrentText(changed_field->prev_value_);
+        QDialog errorDialog(edited->window());
+        errorDialog.setWindowTitle("Invalid choise");
+        errorDialog.setModal(true);
+
+        QVBoxLayout* layout = new QVBoxLayout(&errorDialog);
+        QLabel* label = new QLabel("You cannot choose it.");
+        QPushButton* okButton = new QPushButton("OK");
+
+        layout->addWidget(label);
+        layout->addWidget(okButton);
+
+        QObject::connect(okButton, &QPushButton::clicked, &errorDialog, &QDialog::accept);
+
+        errorDialog.exec();
+
+        return;
+    }
+
     const double base = ToBase(changed_field->prev_value_, edited->text().toDouble());
     changed_field->prev_value_ = unit;
 
@@ -45,9 +71,9 @@ void CalculatorController::UpdateUnit(QLineEdit* edited, QString unit) {
 }
 
 float CalculatorController::ToBase(const QString& unit, const double number) {
-    return to_base[unit] * number;
+    return to_base_[unit] * number;
 }
 
 float CalculatorController::FromBase(const QString& unit, const double number) {
-    return from_base[unit] * number;
+    return from_base_[unit] * number;
 }

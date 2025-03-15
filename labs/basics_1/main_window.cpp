@@ -7,22 +7,40 @@
 #include "calculator_controller.h"
 
 #include <QComboBox>
+#include <QFile>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QVBoxLayout>
+#include <cstddef>
+#include <qdir.h>
 #include <qlayoutitem.h>
+#include <qmenubar.h>
 #include <qobject.h>
 #include <qpushbutton.h>
 #include <qwidget.h>
-#include <unordered_set>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , main_layout_(new QVBoxLayout())
     , controller_(new CalculatorController(this))
     , button_(new QPushButton("Add new unit", this))
-    , main_layout1_(new QVBoxLayout()) {
+    , main_layout1_(new QVBoxLayout())
+    , menu_bar_(new QMenuBar(this)) {
     main_layout_->addWidget(button_);
+
+    setMenuBar(menu_bar_);
+
+    QMenu* fileMenu = menu_bar_->addMenu("&File");
+
+    QAction* saveAction = new QAction("&Save", this);
+    saveAction->setShortcut(QKeySequence::Save);
+    connect(saveAction, &QAction::triggered, this, &MainWindow::SaveSettings);
+    fileMenu->addAction(saveAction);
+
+    QAction* openAction = new QAction("&Open", this);
+    openAction->setShortcut(QKeySequence::Open);
+    connect(openAction, &QAction::triggered, this, &MainWindow::LoadSettings);
+    fileMenu->addAction(openAction);
 
     auto* central_widget = new QWidget(this);
     central_widget->setLayout(main_layout1_);
@@ -64,13 +82,27 @@ void MainWindow::AddField() {
     base_value = base_value * from_base_[necessary_unit];
 
     QHBoxLayout* fieldLayout = new QHBoxLayout;
-    // QString base_value_string = std::to_string(base_value);
-    QLineEdit* value = new QLineEdit(QString::number(base_value));  // 'f', 15
-    // value->setMaxLength(100);
+    QLineEdit* value = new QLineEdit(QString::number(base_value));
     QComboBox* unit = new QComboBox;
-    for (const auto& unit_ : units_) {
-        unit->addItem(unit_);
-    }
+
+    unit->addItem("Metrical:");
+    unit->addItems({"m", "cm", "km", "dm", "mm"});
+    unit->insertSeparator(unit->count());
+
+    unit->addItem("British/American:");
+    unit->addItems({"mi", "yd", "ft", "in"});
+    unit->insertSeparator(unit->count());
+
+    unit->addItem("Chinese:");
+    unit->addItems({"li", "zhang", "chi", "cun"});
+    unit->insertSeparator(unit->count());
+
+    unit->addItem("Astronomical:");
+    unit->addItems({"au", "ly", "pc"});
+    unit->insertSeparator(unit->count());
+
+    unit->addItem("Sea:");
+    unit->addItems({"nmi"});
 
     unit->setCurrentText(necessary_unit);
 
@@ -84,4 +116,68 @@ void MainWindow::AddField() {
     connect(unit, &QComboBox::currentIndexChanged, this, [this, value, unit] {
         controller_->UpdateUnit(value, unit->currentText());
     });
+}
+
+void MainWindow::SaveSettings() {
+    QFile file(filepath_);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream out(&file);
+
+    if (!controller_->fields_.empty()) {
+        out << controller_->fields_.front().value_->text().toDouble() *
+                   to_base_[controller_->fields_.front().unit_->currentText()]
+            << Qt::endl;
+    }
+
+    for (const auto& field : controller_->fields_) {
+        out << field.prev_value_ << Qt::endl;
+    }
+}
+
+void MainWindow::LoadSettings() {
+    СlearAllFields();
+
+    QFile file(filepath_);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream in(&file);
+    std::vector<QString> values;
+
+    while (!in.atEnd()) {
+        values.push_back(in.readLine());
+    }
+
+    if (values.empty()) {
+        return;
+    }
+
+    double first_value = values.front().toDouble();
+
+    controller_->fields_.front().value_->setText(QString::number(first_value));
+    controller_->fields_.front().unit_->setCurrentText(values[1]);
+
+    for (size_t i = 2; i < std::size(values); ++i) {
+        AddField();
+        controller_->fields_[i - 1].unit_->setCurrentText(values[i]);
+    }
+}
+
+void MainWindow::СlearAllFields() {
+    while (controller_->fields_.size() > 1) {
+        auto& lastField = controller_->fields_.back();
+        delete lastField.value_;
+        delete lastField.unit_;
+        controller_->fields_.pop_back();
+    }
+
+    if (!controller_->fields_.empty()) {
+        controller_->fields_.front().value_->clear();
+        controller_->fields_.front().unit_->setCurrentIndex(1);
+    }
 }

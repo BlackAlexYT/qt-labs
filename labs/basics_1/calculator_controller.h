@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <qdialog.h>
+#include <unordered_set>
 
 class CalculatorController : public QObject {
     Q_OBJECT
@@ -18,7 +19,6 @@ class CalculatorController : public QObject {
     void UpdateUnit(QLineEdit* edited, QString unit);
 
     float ToBase(const QString& unit, double number);
-
     float FromBase(const QString& unit, double number);
 
     struct Field {
@@ -30,7 +30,8 @@ class CalculatorController : public QObject {
     std::vector<Field> fields_{};
     bool is_work_ = false;
     friend class MainWindow;
-    std::unordered_map<QString, double> to_base{
+
+    std::unordered_map<QString, double> to_base_{
       {"m", 1},
       {"cm", 0.01},
       {"km", 1000},
@@ -52,7 +53,8 @@ class CalculatorController : public QObject {
       {"pc", 3.0856775814913672789e16},
 
       {"nmi", 1852}};
-    std::unordered_map<QString, double> from_base{
+
+    std::unordered_map<QString, double> from_base_{
       {"m", 1},
       {"cm", 100},
       {"km", 0.001},
@@ -74,6 +76,9 @@ class CalculatorController : public QObject {
       {"pc", 3.240779289e-17},
 
       {"nmi", 0.000539957}};
+
+    std::pmr::unordered_set<QString> units_{
+      "Metrical:", "British/American:", "Chinese:", "Astronomical:", "Sea:"};
 };
 
 #endif  // CALCULATOR_CONTROLLER_H
