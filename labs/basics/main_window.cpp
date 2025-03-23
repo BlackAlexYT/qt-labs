@@ -256,6 +256,12 @@ void MainWindow::PreviousTicket() {
 
     auto index = tickets_index_history_.back();
     tickets_index_history_.pop_back();
+
+    if (index > ticket_count_ - 1) {
+        PreviousTicket();
+        return;
+    }
+
     view_->item(index)->setSelected(true);
     LoadTicket(index);
 }
