@@ -274,8 +274,8 @@ void MainWindow::SaveTickets() {
     }
 
     QTextStream out(&file);
-    for (const auto& [name, status, description] : tickets_) {
-        out << name << "||" << static_cast<int>(status) << "||" << description << "\n";
+    for (size_t i = 0; i < ticket_count_; ++i) {
+        out << tickets_[i].name << "||" << static_cast<int>(tickets_[i].status) << "||" << tickets_[i].description << "\n";
     }
 }
 
