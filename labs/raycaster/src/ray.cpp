@@ -36,12 +36,14 @@ void Ray::SetAngle(const double angle) {
 }
 
 Ray Ray::Rotate(const double angle) const {
-    double const new_angle = angle + angle_;
-    const double length = sqrt(
-        ((end_.x() - begin_.x()) * (end_.x() - begin_.x())) +
-        ((end_.y() - begin_.y()) * (end_.y() - begin_.y())));
-    const double dx = length * cos(new_angle);
-    const double dy = length * sin(new_angle);
+     const double new_angle = angle + angle_;
+    const double len = length();
+    const double dx = len * cos(new_angle);
+    const double dy = len * sin(new_angle);
 
     return Ray{begin_, QPointF{begin_.x() + dx, begin_.y() + dy}, angle_ + angle};
+}
+
+double Ray::length() const {
+    return sqrt((begin_.x() - end_.x()) * (begin_.x() - end_.x()) + (begin_.y() - end_.y()) * (begin_.y() - end_.y()));
 }

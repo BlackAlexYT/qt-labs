@@ -19,6 +19,9 @@ public:
     void SetAngle(double angle);
 
     [[nodiscard]] Ray Rotate(double angle) const;
+
+    double length() const;
+
 private:
     QPointF begin_;
     QPointF end_;

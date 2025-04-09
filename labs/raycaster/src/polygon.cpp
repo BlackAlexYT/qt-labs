@@ -23,49 +23,43 @@ void Polygon::UpdateLastVertex(const QPointF& new_vertex) {
 }
 
 std::optional<QPointF> Polygon::IntersectRay(const Ray& ray) {
-    double min_distance = -1;
-    QPointF intersection;
-    for (size_t i = 0; i < std::size(vertices_); ++i) {
-        const QPointF& v1 = vertices_[i];
-        const QPointF& v2 = vertices_[(i + 1) % std::size(vertices_)];
-        const double a = v1.y() - v2.y();
-        const double b = v2.x() - v1.x();
-        const double c = v1.x() * v2.y() - v2.x() * v1.y();
+    const QPointF& origin = ray.GetBegin();
+    const double angle = ray.GetAngle();
+    const double dx = std::cos(angle);
+    const double dy = std::sin(angle);
 
-        const double dx = cos(ray.GetAngle());
-        const double dy = sin(ray.GetAngle());
+    std::optional<QPointF> closest_intersection;
+    double min_distance_sq = std::numeric_limits<double>::max();
 
-        const double denominator = a * dx + b * dy;
-        if (denominator == 0) {
+    const size_t n = vertices_.size();
+    for (size_t i = 0; i < n; ++i) {
+        const QPointF& p1 = vertices_[i];
+        const QPointF& p2 = vertices_[(i + 1) % n];
+
+        const double x1 = p1.x(), y1 = p1.y();
+        const double x2 = p2.x(), y2 = p2.y();
+        const double x3 = origin.x(), y3 = origin.y();
+        const double x4 = origin.x() + dx, y4 = origin.y() + dy;
+
+        const double denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (std::abs(denom) < 1e-9) {
             continue;
         }
 
-        const double numerator = -(a * ray.GetBegin().x() + b * ray.GetBegin().y() + c);
-        const double t = numerator / denominator;
-        if (t >= 0) {
-            const double x = ray.GetBegin().x() + (t * dx);
-            const double y = ray.GetBegin().y() + (t * dy);
+        const double t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
+        const double u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denom;
 
-            const double x_min = std::min(v1.x(), v2.x());
-            const double x_max = std::max(v1.x(), v2.x());
-            const double y_min = std::min(v1.y(), v2.y());
-            const double y_max = std::max(v1.y(), v2.y());
+        if (t >= 0.0 && t <= 1.0 && u >= 0.0) {
+            const double ix = x1 + t * (x2 - x1);
+            const double iy = y1 + t * (y2 - y1);
 
-            if (x >= x_min && x <= x_max && y >= y_min && y <= y_max) {
-                double current_distance = std::sqrt(
-                    ((x - ray.GetBegin().x()) * (x - ray.GetBegin().x())) +
-                    ((y - ray.GetBegin().y()) * (y - ray.GetBegin().y())));
-                if (min_distance == -1 || current_distance < min_distance) {
-                    intersection.setX(x);
-                    intersection.setY(y);
-                    min_distance = current_distance;
-                }
+            const double dist_sq = (ix - x3) * (ix - x3) + (iy - y3) * (iy - y3);
+            if (dist_sq < min_distance_sq) {
+                min_distance_sq = dist_sq;
+                closest_intersection = QPointF(ix, iy);
             }
         }
     }
-    if (min_distance == -1) {
-        return std::nullopt;
-    }
 
-    return intersection;
+    return closest_intersection;
 }
