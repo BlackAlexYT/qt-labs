@@ -76,8 +76,8 @@ qt_cc_library(
         ":controller",
         "@rules_qt//:qt_core",
         "@rules_qt//:qt_gui",
-        "@rules_qt//:qt_opengl",
-        "@rules_qt//:qt_opengl_widgets",
+        #        "@rules_qt//:qt_opengl",
+        #        "@rules_qt//:qt_opengl_widgets",
         "@rules_qt//:qt_widgets",
     ],
 )
@@ -90,8 +90,8 @@ qt_cc_binary(
         ":polygon",
         ":ray",
         "@rules_qt//:qt_core",
-        "@rules_qt//:qt_opengl",
-        "@rules_qt//:qt_opengl_widgets",
+        #        "@rules_qt//:qt_opengl",
+        #        "@rules_qt//:qt_opengl_widgets",
         "@rules_qt//:qt_widgets",
     ],
 )

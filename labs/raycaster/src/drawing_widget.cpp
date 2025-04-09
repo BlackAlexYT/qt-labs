@@ -13,7 +13,7 @@
 #include <qtmetamacros.h>
 
 DrawingWidget::DrawingWidget(Controller* controller, QWidget* parent)
-    : QOpenGLWidget(parent), controller_(controller) {
+    : QWidget(parent), controller_(controller) {
     setMouseTracking(true);
 }
 
@@ -129,5 +129,6 @@ void DrawingWidget::FillPolygonArea(
 
 void DrawingWidget::resizeEvent(QResizeEvent* event) {
     controller_->UpdateBorderRect(event->size());
-    QOpenGLWidget::resizeEvent(event);
+    // QOpenGLWidget::resizeEvent(event);
+    QWidget::resizeEvent(event);
 }

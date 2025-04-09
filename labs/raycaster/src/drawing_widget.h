@@ -9,13 +9,13 @@
 #include "drawing_widget.h"
 
 #include <QMouseEvent>
-#include <QOpenGLWidget>
+// #include <QOpenGLWidget>
 #include <QPainter>
 
-// #include <QWidget>
-// class DrawingWidget : public QWidget {
+#include <QWidget>
+class DrawingWidget : public QWidget {
 
-class DrawingWidget : public QOpenGLWidget {
+// class DrawingWidget : public QOpenGLWidget {
     Q_OBJECT
    public:
     explicit DrawingWidget(Controller* controller, QWidget* parent = nullptr);
