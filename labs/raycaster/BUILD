@@ -74,7 +74,6 @@ qt_cc_library(
     ],
     deps = [
         ":controller",
-        ":opengl",
         "@rules_qt//:qt_core",
         "@rules_qt//:qt_gui",
         "@rules_qt//:qt_opengl",
@@ -95,11 +94,4 @@ qt_cc_binary(
         "@rules_qt//:qt_opengl_widgets",
         "@rules_qt//:qt_widgets",
     ],
-)
-
-# Добавьте описание библиотеки OpenGL
-cc_library(
-    name = "opengl",
-    linkopts = ["-lGL"],  # Флаг для линковки с OpenGL
-    visibility = ["//visibility:public"],
 )

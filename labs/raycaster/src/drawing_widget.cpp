@@ -10,6 +10,7 @@
 #include <QPainterPath>
 #include <qcolor.h>
 #include <qmath.h>
+#include <qtmetamacros.h>
 
 DrawingWidget::DrawingWidget(Controller* controller, QWidget* parent)
     : QOpenGLWidget(parent), controller_(controller) {
@@ -17,6 +18,9 @@ DrawingWidget::DrawingWidget(Controller* controller, QWidget* parent)
 }
 
 void DrawingWidget::paintEvent(QPaintEvent* event) {
+    QElapsedTimer timer;
+    timer.start();
+
     QPainter painter(this);
     painter.fillRect(rect(), QColor(70, 51, 94));
 
@@ -58,13 +62,22 @@ void DrawingWidget::paintEvent(QPaintEvent* event) {
         painter.drawEllipse(light, 4, 4);
 
         for (int i = 0; i < 8; ++i) {
-            double angle = i * angle_step;
+            const double angle = i * angle_step;
 
-            double x = light.x() + 15 * std::cos(angle);
-            double y = light.y() + 15 * std::sin(angle);
+            const double x = light.x() + 15 * std::cos(angle);
+            const double y = light.y() + 15 * std::sin(angle);
             painter.drawEllipse(QPointF(x, y), 4, 4);
         }
     }
+    QString fpsText;
+    int const frame_time = timer.nsecsElapsed() / 1000.0;
+    if (int const fps = 1e6 / frame_time; fps > 10'000) {
+        fpsText = "∞ FPS";
+    } else {
+        fpsText = QString::asprintf("%i FPS", fps);
+    }
+
+    emit FPSUpdated(fpsText);
 }
 
 void DrawingWidget::mouseMoveEvent(QMouseEvent* event) {

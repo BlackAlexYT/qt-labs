@@ -29,6 +29,9 @@ class DrawingWidget : public QOpenGLWidget {
 
     void resizeEvent(QResizeEvent* event) override;
 
+   signals:
+    void FPSUpdated(const QString& fpsText);
+
    private:
     Controller* controller_;
     bool drawing_polygon_ = false;

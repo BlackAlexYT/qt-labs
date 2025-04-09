@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QMainWindow>
 #include "drawing_widget.h"
+#include <QLabel>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -24,5 +25,6 @@ private:
     QComboBox* mode_selector_;
     DrawingWidget* drawing_widget_;
     Controller controller_;
+    QLabel* fps_label_;
 };
 #endif  // MAIN_WINDOW_H
