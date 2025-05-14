@@ -28,6 +28,8 @@ private:
 
     void OnSelectDifficulty();
 
+    void UpdateEXP();
+
 
     QWidget *central_widget_;
     QLabel *level_circle_;
@@ -41,6 +43,10 @@ private:
     // GrammarExercise *grammar_widget_;
     QTimer *exercise_timer_;
     int difficult_level_ = 0;
+
+    int level_ = 1;
+    int exp_ = 0;
+    int necessary_exp_ = 10;
 };
 
 

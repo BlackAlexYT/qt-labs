@@ -15,6 +15,7 @@ MainWindow::MainWindow() {
     SetupMenu();
     SetupUI();
     ApplyStyles();
+    UpdateEXP();
 }
 
 void MainWindow::SetupMenu() {
@@ -30,7 +31,7 @@ void MainWindow::SetupUI() {
     central_widget_ = new QWidget(this);
     setCentralWidget(central_widget_);
 
-    level_circle_ = new QLabel("Level 1", this);
+    level_circle_ = new QLabel("Level: 1", this);
     level_circle_->setAlignment(Qt::AlignCenter);
     level_circle_->setObjectName("levelCircle");
     level_circle_->setFixedSize(160, 160);
@@ -75,13 +76,6 @@ void MainWindow::SetupUI() {
     central_widget_->setLayout(main_layout);
 
     setMinimumSize(800, 600);
-
-
-    int current_exp = 300;
-    int max_exp = 1000;
-    exp_bar_->setRange(0, max_exp);
-    exp_bar_->setValue(current_exp);
-    exp_bar_->setFormat(QString("%1/%2 XP").arg(current_exp).arg(max_exp));
 }
 
 void MainWindow::ApplyStyles() const {
@@ -184,4 +178,16 @@ void MainWindow::OnSelectDifficulty() {
         QMessageBox::information(this, "Difficulty Selected", "You chose: " + level);
         difficult_level_ = levels.indexOf(level);
     }
+}
+
+void MainWindow::UpdateEXP() {
+    if (exp_ >= necessary_exp_) {
+        level_ ++;
+        exp_ -= necessary_exp_;
+        necessary_exp_ += 10;
+        exp_bar_->setRange(0, necessary_exp_);
+    }
+    level_circle_->setText("Level: " + QString::number(level_));
+    exp_bar_->setFormat(QString("%1/%2 XP").arg(exp_).arg(necessary_exp_));
+    exp_bar_->setValue(exp_);
 }
