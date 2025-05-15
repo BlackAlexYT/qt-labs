@@ -5,8 +5,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <string>
+#include <QtSql/QSqlQuery>
 
-TranslationExercise::TranslationExercise(int difficult_level, int index, QWidget *parent) : difficult_level_(difficult_level), index_(index) {
+TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDatabase db,
+                                         QWidget *parent) : difficult_level_(difficult_level), index_(index), db_(db) {
     question_label_ = new QLabel(this);
     question_label_->setAlignment(Qt::AlignCenter);
     answer_edit_ = new QLineEdit(this);
@@ -20,49 +22,48 @@ TranslationExercise::TranslationExercise(int difficult_level, int index, QWidget
 
     question_label_->setStyleSheet("color: white;");
     answer_edit_->setStyleSheet("background-color: white; color: purple; border: 1px solid purple; padding: 5px;");
-    submit_button_->setStyleSheet("background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: 16px;");
+    submit_button_->setStyleSheet(
+        "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: 16px;");
 
     connect(submit_button_, &QPushButton::clicked, this, &ExerciseWidget::OnSubmit);
     TranslationExercise::LoadQuestion();
 }
 
 bool TranslationExercise::ValidateAnswer(const QString &answer) {
-    if (answer_ == answer_edit_->text()) {
-        return true;
-    }
-    return false;
+    return answer_.toLower() == answer_edit_->text().toLower(); //TODO: add dialogue window
 }
 
 TranslationExercise::~TranslationExercise() {
 }
 
 void TranslationExercise::LoadQuestion() {
-    question_label_->setText("TestQuestion");
-
-    answer_ = "TestAnswer"; //TODO: DB
+    QSqlQuery query;
+    if (query.exec(
+        "SELECT english_word, german_word from " + difficulties_[difficult_level_] + " where id == " +
+        QString::number(index_) + ";")) {
+        while (query.next()) {
+            const QString english_word = query.value(0).toString();
+            const QString german_word = query.value(1).toString();
+            question_label_->setText(english_word);
+            answer_ = german_word;
+        }
+    }
 }
 
-
-
-void TranslationExercise::OnParentResized(double w_ratio, double h_ratio)
-{
-    {
+void TranslationExercise::OnParentResized(double w_ratio, double h_ratio) { {
         const int font_size = static_cast<int>(36 * h_ratio);
         QFont label_font = question_label_->font();
         label_font.setPointSize(font_size);
         question_label_->setFont(label_font);
-    }
-
-    {
+    } {
         const int font_size = static_cast<int>(16 * h_ratio);
         QFont label_font = answer_edit_->font();
         label_font.setPointSize(font_size);
         answer_edit_->setFont(label_font);
-    }
-
-    {
+    } {
         const int font_size = static_cast<int>(20 * h_ratio);
-        submit_button_->setStyleSheet("background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: "+QString::number(font_size)+"px;");
-        qDebug() << font_size;  //TODO: ubrat'
+        submit_button_->setStyleSheet(
+            "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: " +
+            QString::number(font_size) + "px;");
     }
 }

@@ -11,6 +11,10 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <qtmetamacros.h>
+#include <random>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 
 MainWindow::MainWindow() {
@@ -18,6 +22,7 @@ MainWindow::MainWindow() {
     SetupUI();
     ApplyStyles();
     UpdateEXP();
+    OpenDB();
 }
 
 void MainWindow::SetupMenu() {
@@ -78,6 +83,22 @@ void MainWindow::SetupUI() {
     central_widget_->setLayout(main_layout);
 
     exp_bar_->setRange(0, necessary_exp_);
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    for (int i = 0; i < 243; ++i) {
+        translation_indices_[0].push_back(i + 1);
+    }
+    for (int i = 0; i < 317; ++i) {
+        translation_indices_[1].push_back(i + 1);
+    }
+    for (int i = 0; i < 172; ++i) {
+        translation_indices_[2].push_back(i + 1);
+    }
+
+    std::ranges::shuffle(translation_indices_[0], g);
+    std::ranges::shuffle(translation_indices_[1], g);
+    std::ranges::shuffle(translation_indices_[2], g);
 
     connect(translation_button_, &QPushButton::clicked, this, &MainWindow::OnTranslation);
 
@@ -180,8 +201,9 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 void MainWindow::OnSelectDifficulty() {
     bool ok = false;
     const QStringList levels = {"Easy", "Medium", "Hard"};
-    const QString level = QInputDialog::getItem(this, "Select Difficulty", "Difficulty:", levels, difficult_level_, false,
-                                          &ok);
+    const QString level = QInputDialog::getItem(this, "Select Difficulty", "Difficulty:", levels, difficult_level_,
+                                                false,
+                                                &ok);
     if (ok && !level.isEmpty()) {
         QMessageBox::information(this, "Difficulty Selected", "You chose: " + level);
         difficult_level_ = levels.indexOf(level);
@@ -190,7 +212,7 @@ void MainWindow::OnSelectDifficulty() {
 
 void MainWindow::UpdateEXP() {
     if (exp_ >= necessary_exp_) {
-        level_ ++;
+        level_++;
         exp_ -= necessary_exp_;
         necessary_exp_ += 10;
         exp_bar_->setRange(0, necessary_exp_);
@@ -205,12 +227,13 @@ void MainWindow::OnTranslation() {
         return;
     }
     for (int i = 0; i < 5; ++i) {
-        TranslationExercise* translation_widget = new TranslationExercise(difficult_level_, translation_index_[difficult_level_]);
-        translation_index_[difficult_level_]++;
+        TranslationExercise *translation_widget = new TranslationExercise(
+            difficult_level_, translation_indices_[difficult_level_].back(), db_);
+        translation_indices_[difficult_level_].pop_back();
         connect(translation_widget, &ExerciseWidget::ExerciseAnswered,
-                  this, &MainWindow::OnExerciseAnswered);
+                this, &MainWindow::OnExerciseAnswered);
         connect(this, &MainWindow::ResizeEvent,
-        translation_widget, &TranslationExercise::OnParentResized);
+                translation_widget, &TranslationExercise::OnParentResized);
         stacked_widget_->addWidget(translation_widget);
     }
     constexpr int kBaseWidth = 800;
@@ -226,8 +249,13 @@ void MainWindow::OnExerciseAnswered(const bool ok) {
         exp_ += 1;
         UpdateEXP();
     }
-    QWidget* current = stacked_widget_->currentWidget();
+    QWidget *current = stacked_widget_->currentWidget();
     stacked_widget_->removeWidget(current);
     delete current;
-    qDebug() << exp_ << necessary_exp_; //TODO: ubrat' v relize
+}
+
+void MainWindow::OpenDB() {
+    db_ = QSqlDatabase::addDatabase("QSQLITE");
+    db_.setDatabaseName("labs/duolingo/questions.db"); // замените на путь к вашей базе
+    db_.open();
 }
