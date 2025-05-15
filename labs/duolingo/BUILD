@@ -1,11 +1,17 @@
 load("@rules_qt//:qt.bzl", "qt_cc_binary", "qt_cc_library")
 
 qt_cc_library(
-    name = "main_window",
+    name = "libs",
     srcs = [
+        "exercise_widget.cpp",
         "main_window.cpp",
+        "translation_exercise.cpp",
     ],
-    hdrs = ["main_window.h"],
+    hdrs = [
+        "exercise_widget.h",
+        "main_window.h",
+        "translation_exercise.h",
+    ],
     deps = [
         "@rules_qt//:qt_core",
         "@rules_qt//:qt_gui",
@@ -17,7 +23,7 @@ qt_cc_binary(
     name = "duolingo",
     srcs = ["main.cpp"],
     deps = [
-        ":main_window",
+        ":libs",
         "@rules_qt//:qt_core",
         "@rules_qt//:qt_widgets",
     ],

@@ -24,9 +24,7 @@ signals:
 private:
     friend class TranslationExercise;
 
-    virtual void OnActivated() = 0;
-
-    void LoadQuestion();
+    virtual void LoadQuestion() = 0;
 
     QLabel *question_label_;
     QLineEdit *answer_edit_;

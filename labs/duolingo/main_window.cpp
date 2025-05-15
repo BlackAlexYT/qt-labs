@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "exercise_widget.h"
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QProgressBar>
@@ -9,6 +10,7 @@
 #include <QMenuBar>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <qtmetamacros.h>
 
 
 MainWindow::MainWindow() {
@@ -75,8 +77,11 @@ void MainWindow::SetupUI() {
 
     central_widget_->setLayout(main_layout);
 
-    translation_widget_ = new TranslationExercise();
+    exp_bar_->setRange(0, necessary_exp_);
+
     connect(translation_button_, &QPushButton::clicked, this, &MainWindow::OnTranslation);
+
+
     setMinimumSize(800, 600);
 }
 
@@ -87,7 +92,7 @@ void MainWindow::ApplyStyles() const {
                 stop:0 #7f00ff, stop:1 #e100ff);
         }
     )";
-    //
+
     const QString circle_style = R"(
         QLabel#levelCircle {
             background-color: #d18cff;
@@ -128,11 +133,12 @@ void MainWindow::ApplyStyles() const {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
 
-    constexpr int base_width = 800;
-    constexpr int base_height = 600;
+    constexpr int kBaseWidth = 800;
+    constexpr int kBaseHeight = 600;
 
-    const qreal w_ratio = static_cast<qreal>(width()) / base_width;
-    const qreal h_ratio = static_cast<qreal>(height()) / base_height;
+    const qreal w_ratio = static_cast<qreal>(width()) / kBaseWidth;
+    const qreal h_ratio = static_cast<qreal>(height()) / kBaseHeight;
+    emit ResizeEvent(w_ratio, h_ratio);
 
     const int font_size = qMax(24, static_cast<int>(48 * h_ratio));
     QFont label_font = learn_german_label_->font();
@@ -173,8 +179,8 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
 void MainWindow::OnSelectDifficulty() {
     bool ok = false;
-    QStringList levels = {"Easy", "Medium", "Hard"};
-    QString level = QInputDialog::getItem(this, "Select Difficulty", "Difficulty:", levels, difficult_level_, false,
+    const QStringList levels = {"Easy", "Medium", "Hard"};
+    const QString level = QInputDialog::getItem(this, "Select Difficulty", "Difficulty:", levels, difficult_level_, false,
                                           &ok);
     if (ok && !level.isEmpty()) {
         QMessageBox::information(this, "Difficulty Selected", "You chose: " + level);
@@ -195,6 +201,33 @@ void MainWindow::UpdateEXP() {
 }
 
 void MainWindow::OnTranslation() {
-    stacked_widget_->addWidget(translation_widget_);
+    if (stacked_widget_->count() != 0) {
+        return;
+    }
+    for (int i = 0; i < 5; ++i) {
+        TranslationExercise* translation_widget = new TranslationExercise(difficult_level_, translation_index_[difficult_level_]);
+        translation_index_[difficult_level_]++;
+        connect(translation_widget, &ExerciseWidget::ExerciseAnswered,
+                  this, &MainWindow::OnExerciseAnswered);
+        connect(this, &MainWindow::ResizeEvent,
+        translation_widget, &TranslationExercise::OnParentResized);
+        stacked_widget_->addWidget(translation_widget);
+    }
+    constexpr int kBaseWidth = 800;
+    constexpr int kBaseHeight = 600;
 
+    const qreal w_ratio = static_cast<qreal>(width()) / kBaseWidth;
+    const qreal h_ratio = static_cast<qreal>(height()) / kBaseHeight;
+    emit ResizeEvent(w_ratio, h_ratio);
+}
+
+void MainWindow::OnExerciseAnswered(const bool ok) {
+    if (ok) {
+        exp_ += 1;
+        UpdateEXP();
+    }
+    QWidget* current = stacked_widget_->currentWidget();
+    stacked_widget_->removeWidget(current);
+    delete current;
+    qDebug() << exp_ << necessary_exp_; //TODO: ubrat' v relize
 }
