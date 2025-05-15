@@ -47,14 +47,14 @@ void MainWindow::SetupUI() {
     exp_bar_->setFixedHeight(14);
     exp_bar_->setObjectName("expBar");
 
-    translation_btn_ = new QPushButton("Translation", this);
-    grammar_btn_ = new QPushButton("Grammar", this);
+    translation_button_ = new QPushButton("Translation", this);
+    grammar_button_ = new QPushButton("Grammar", this);
 
     stacked_widget_ = new QStackedWidget(this);
 
     QHBoxLayout *btn_layout = new QHBoxLayout;
-    btn_layout->addWidget(translation_btn_);
-    btn_layout->addWidget(grammar_btn_);
+    btn_layout->addWidget(translation_button_);
+    btn_layout->addWidget(grammar_button_);
     btn_layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QVBoxLayout *top_layout = new QVBoxLayout;
@@ -75,6 +75,8 @@ void MainWindow::SetupUI() {
 
     central_widget_->setLayout(main_layout);
 
+    translation_widget_ = new TranslationExercise();
+    connect(translation_button_, &QPushButton::clicked, this, &MainWindow::OnTranslation);
     setMinimumSize(800, 600);
 }
 
@@ -114,9 +116,9 @@ void MainWindow::ApplyStyles() const {
         }
     )";
     //
-    translation_btn_->setStyleSheet(
+    translation_button_->setStyleSheet(
         "QPushButton { background-color: #cc66ff; color: white; padding: 8px 1px; border-radius: 8px; } QPushButton:hover { background-color: #dd88ff; }");
-    grammar_btn_->setStyleSheet(
+    grammar_button_->setStyleSheet(
         "QPushButton { background-color: #ff99cc; color: white; padding: 8px 1px; border-radius: 8px; } QPushButton:hover { background-color: #ffaadf; }");
 
     central_widget_->setObjectName("centralWidget");
@@ -159,14 +161,14 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     const int btn_height = qMax(30, static_cast<int>(40 * h_ratio));
     const int btn_width = qMax(100, static_cast<int>(160 * w_ratio));
-    translation_btn_->setFixedSize(btn_width, btn_height);
-    grammar_btn_->setFixedSize(btn_width, btn_height);
+    translation_button_->setFixedSize(btn_width, btn_height);
+    grammar_button_->setFixedSize(btn_width, btn_height);
 
     const int btn_font_size = qMax(10, static_cast<int>(14 * h_ratio));
     QFont btn_font;
     btn_font.setPointSize(btn_font_size);
-    translation_btn_->setFont(btn_font);
-    grammar_btn_->setFont(btn_font);
+    translation_button_->setFont(btn_font);
+    grammar_button_->setFont(btn_font);
 }
 
 void MainWindow::OnSelectDifficulty() {
@@ -190,4 +192,9 @@ void MainWindow::UpdateEXP() {
     level_circle_->setText("Level: " + QString::number(level_));
     exp_bar_->setFormat(QString("%1/%2 XP").arg(exp_).arg(necessary_exp_));
     exp_bar_->setValue(exp_);
+}
+
+void MainWindow::OnTranslation() {
+    stacked_widget_->addWidget(translation_widget_);
+
 }
