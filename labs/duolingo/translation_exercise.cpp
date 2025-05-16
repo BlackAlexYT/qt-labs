@@ -1,17 +1,21 @@
 #include "../../labs/duolingo/translation_exercise.h"
+
+#include <qdialogbuttonbox.h>
 #include <QWidget>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
+#include <QMessageBox>
 #include <QVBoxLayout>
 #include <string>
 #include <QtSql/QSqlQuery>
+#include <QSoundEffect>
 
 TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDatabase db,
                                          QWidget *parent) : difficult_level_(difficult_level), index_(index), db_(db) {
     question_label_ = new QLabel(this);
     question_label_->setAlignment(Qt::AlignCenter);
-    answer_edit_ = new QLineEdit(this);
+    answer_edit_ = new QLineEdit(this); // TODO: add by pressing enter check the answer
     submit_button_ = new QPushButton("Check", this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -30,7 +34,19 @@ TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDat
 }
 
 bool TranslationExercise::ValidateAnswer(const QString &answer) {
-    return answer_.toLower() == answer_edit_->text().toLower(); //TODO: add dialogue window
+    if (answer_.toLower() == answer_edit_->text().toLower()) {
+        QSoundEffect effect;
+        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/correct.wav"));
+        effect.play();
+        QMessageBox::information(this, "Correct!", "Your answer is correct!");
+    } else {
+        QSoundEffect effect;
+        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/wrong.wav"));
+        effect.play();
+        QMessageBox::critical(this, "Wrong!", "Your answer is wrong! The right answer is " + answer_);
+    }
+    return answer_.toLower() == answer_edit_->text().toLower();
+    // TODO: half points for wrong article.
 }
 
 TranslationExercise::~TranslationExercise() {

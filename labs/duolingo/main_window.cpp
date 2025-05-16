@@ -256,6 +256,6 @@ void MainWindow::OnExerciseAnswered(const bool ok) {
 
 void MainWindow::OpenDB() {
     db_ = QSqlDatabase::addDatabase("QSQLITE");
-    db_.setDatabaseName("labs/duolingo/questions.db"); // замените на путь к вашей базе
+    db_.setDatabaseName("labs/duolingo/data/questions.db"); // замените на путь к вашей базе
     db_.open();
 }
