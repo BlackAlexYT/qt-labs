@@ -30,6 +30,8 @@ TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDat
         "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: 16px;");
 
     connect(submit_button_, &QPushButton::clicked, this, &ExerciseWidget::OnSubmit);
+    connect(answer_edit_, &QLineEdit::returnPressed, this, &ExerciseWidget::OnSubmit);
+
     TranslationExercise::LoadQuestion();
 }
 
@@ -66,7 +68,7 @@ void TranslationExercise::LoadQuestion() {
     }
 }
 
-void TranslationExercise::OnParentResized(double w_ratio, double h_ratio) { {
+void TranslationExercise::OnParentResized(double  /*w_ratio*/, const double h_ratio) const { {
         const int font_size = static_cast<int>(36 * h_ratio);
         QFont label_font = question_label_->font();
         label_font.setPointSize(font_size);

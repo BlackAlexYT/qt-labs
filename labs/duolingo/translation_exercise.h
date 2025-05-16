@@ -18,7 +18,7 @@ public:
 private:
     void LoadQuestion() override;
 
-    void OnParentResized(double w_ratio, double h_ratio);
+    void OnParentResized(double w_ratio, double h_ratio) const;
 
     int difficult_level_{};
     int index_{};
