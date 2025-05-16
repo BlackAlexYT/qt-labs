@@ -55,20 +55,35 @@ TranslationExercise::~TranslationExercise() {
 }
 
 void TranslationExercise::LoadQuestion() {
-    QSqlQuery query;
-    if (query.exec(
-        "SELECT english_word, german_word from " + difficulties_[difficult_level_] + " where id == " +
-        QString::number(index_) + ";")) {
-        while (query.next()) {
-            const QString english_word = query.value(0).toString();
-            const QString german_word = query.value(1).toString();
-            question_label_->setText(english_word);
-            answer_ = german_word;
+    QSqlQuery select_query;
+    select_query.exec("SELECT question_id FROM "+difficulty_indices_table_names_[difficult_level_]+" ORDER BY question_id LIMIT 1");
+    if (!select_query.next()) {
+        QMessageBox::information(this, "Congratulation!",
+                                 "There's no more questions with this difficulty! Select another difficulty");
+    }
+    index_ = select_query.value(0).toInt();
+
+    QSqlQuery delete_query;
+    delete_query.prepare("DELETE FROM "+difficulty_indices_table_names_[difficult_level_]+" WHERE question_id = :id");
+    delete_query.bindValue(":id", index_);
+    delete_query.exec();
+
+    {
+        QSqlQuery query;
+        if (query.exec(
+            "SELECT english_word, german_word from " + difficulties_[difficult_level_] + " where id == " +
+            QString::number(index_) + ";")) {
+            while (query.next()) {
+                const QString english_word = query.value(0).toString();
+                const QString german_word = query.value(1).toString();
+                question_label_->setText(english_word);
+                answer_ = german_word;
+            }
         }
     }
 }
 
-void TranslationExercise::OnParentResized(double  /*w_ratio*/, const double h_ratio) const { {
+void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_ratio) const { {
         const int font_size = static_cast<int>(36 * h_ratio);
         QFont label_font = question_label_->font();
         label_font.setPointSize(font_size);

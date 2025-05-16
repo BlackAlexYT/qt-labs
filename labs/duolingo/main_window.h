@@ -43,6 +43,7 @@ private:
 
     void UpdateEXP();
 
+    void SaveUserData();
 
     QWidget *central_widget_;
     QLabel *level_circle_;
@@ -54,7 +55,7 @@ private:
     QStackedWidget *stacked_widget_;
     QTimer *exercise_timer_;
     int difficult_level_ = 0;
-    int level_ = 1; // TODO: save xp and maybe passed levels
+    int level_ = 1;
     int exp_ = 0;
     int necessary_exp_ = 10;
     std::vector<std::vector<int> > translation_indices_{3};

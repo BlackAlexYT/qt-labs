@@ -28,5 +28,9 @@ private:
     std::vector<QString> difficulties_{
         "translation_questions_easy", "translation_questions_medium", "translation_questions_hard"
     };
+    std::vector<QString> difficulty_indices_table_names_{
+        "unanswered_translation_easy_questions", "unanswered_translation_medium_questions",
+        "unanswered_translation_hard_questions"
+    };
 };
 #endif

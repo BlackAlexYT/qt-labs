@@ -21,8 +21,8 @@ MainWindow::MainWindow() {
     SetupMenu();
     SetupUI();
     ApplyStyles();
-    UpdateEXP();
     OpenDB();
+    UpdateEXP();
 }
 
 void MainWindow::SetupMenu() {
@@ -32,6 +32,7 @@ void MainWindow::SetupMenu() {
 }
 
 MainWindow::~MainWindow() {
+    SaveUserData();
 }
 
 void MainWindow::SetupUI() {
@@ -81,8 +82,6 @@ void MainWindow::SetupUI() {
     main_layout->addWidget(stacked_widget_, 0);
 
     central_widget_->setLayout(main_layout);
-
-    exp_bar_->setRange(0, necessary_exp_);
 
     std::random_device rd;
     std::mt19937 g(rd());
@@ -141,7 +140,7 @@ void MainWindow::ApplyStyles() const {
             text-transform: uppercase;
         }
     )";
-    //
+
     translation_button_->setStyleSheet(
         "QPushButton { background-color: #cc66ff; color: white; padding: 8px 1px; border-radius: 8px; } QPushButton:hover { background-color: #dd88ff; }");
     grammar_button_->setStyleSheet(
@@ -215,8 +214,8 @@ void MainWindow::UpdateEXP() {
         level_++;
         exp_ -= necessary_exp_;
         necessary_exp_ += 10;
-        exp_bar_->setRange(0, necessary_exp_);
     }
+    exp_bar_->setRange(0, necessary_exp_);
     level_circle_->setText("Level: " + QString::number(level_));
     exp_bar_->setFormat(QString("%1/%2 XP").arg(exp_).arg(necessary_exp_));
     exp_bar_->setValue(exp_);
@@ -243,7 +242,7 @@ void MainWindow::OnTranslation() {
     const qreal h_ratio = static_cast<qreal>(height()) / kBaseHeight;
     emit ResizeEvent(w_ratio, h_ratio);
 }
-
+//todo: add clear stacked_widget sound effect
 void MainWindow::OnExerciseAnswered(const bool ok) {
     if (ok) {
         exp_ += 1;
@@ -256,6 +255,24 @@ void MainWindow::OnExerciseAnswered(const bool ok) {
 
 void MainWindow::OpenDB() {
     db_ = QSqlDatabase::addDatabase("QSQLITE");
-    db_.setDatabaseName("labs/duolingo/data/questions.db"); // замените на путь к вашей базе
+    db_.setDatabaseName("labs/duolingo/data/questions.db");
     db_.open();
+    QSqlQuery query;
+    query.prepare("SELECT level, experience FROM user WHERE user_id = 1");
+    if (query.exec()) {
+        if (query.next()) {
+            level_ = query.value(0).toInt();
+            exp_ = query.value(1).toInt();
+            necessary_exp_ = level_ * 10;
+        }
+    }
+}
+
+void MainWindow::SaveUserData() {
+    QSqlQuery query;
+    query.prepare("UPDATE user SET level = :level, experience = :xp WHERE user_id = :id");
+    query.bindValue(":level", level_);
+    query.bindValue(":xp", exp_);
+    query.bindValue(":id", 1);
+    query.exec();
 }
