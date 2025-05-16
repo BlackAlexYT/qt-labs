@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QSoundEffect>
 #include <QStackedWidget>
 #include "translation_exercise.h"
 #include <vector>
@@ -54,11 +55,11 @@ private:
     QPushButton *grammar_button_;
     QStackedWidget *stacked_widget_;
     QTimer *exercise_timer_;
+    QSoundEffect complete_effect_;
     int difficult_level_ = 0;
     int level_ = 1;
     int exp_ = 0;
     int necessary_exp_ = 10;
-    std::vector<std::vector<int> > translation_indices_{3};
     QSqlDatabase db_;
     // TODO: add timer
 };

@@ -9,7 +9,7 @@ class TranslationExercise : public ExerciseWidget {
     Q_OBJECT
 
 public:
-    TranslationExercise(int difficult_level, int index, QSqlDatabase db, QWidget *parent = nullptr);
+    TranslationExercise(int difficult_level, const QSqlDatabase& db, QWidget *parent = nullptr);
 
     bool ValidateAnswer(const QString &answer) override;
 

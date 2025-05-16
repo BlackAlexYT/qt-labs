@@ -10,11 +10,11 @@
 #include <QMenuBar>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSoundEffect>
 #include <qtmetamacros.h>
-#include <random>
+#include <qurl.h>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
 
 
 MainWindow::MainWindow() {
@@ -83,21 +83,7 @@ void MainWindow::SetupUI() {
 
     central_widget_->setLayout(main_layout);
 
-    std::random_device rd;
-    std::mt19937 g(rd());
-    for (int i = 0; i < 243; ++i) {
-        translation_indices_[0].push_back(i + 1);
-    }
-    for (int i = 0; i < 317; ++i) {
-        translation_indices_[1].push_back(i + 1);
-    }
-    for (int i = 0; i < 172; ++i) {
-        translation_indices_[2].push_back(i + 1);
-    }
-
-    std::ranges::shuffle(translation_indices_[0], g);
-    std::ranges::shuffle(translation_indices_[1], g);
-    std::ranges::shuffle(translation_indices_[2], g);
+    complete_effect_.setSource(QUrl::fromLocalFile("labs/duolingo/data/complete.wav"));
 
     connect(translation_button_, &QPushButton::clicked, this, &MainWindow::OnTranslation);
 
@@ -227,8 +213,7 @@ void MainWindow::OnTranslation() {
     }
     for (int i = 0; i < 5; ++i) {
         TranslationExercise *translation_widget = new TranslationExercise(
-            difficult_level_, translation_indices_[difficult_level_].back(), db_);
-        translation_indices_[difficult_level_].pop_back();
+            difficult_level_, db_);
         connect(translation_widget, &ExerciseWidget::ExerciseAnswered,
                 this, &MainWindow::OnExerciseAnswered);
         connect(this, &MainWindow::ResizeEvent,
@@ -242,7 +227,7 @@ void MainWindow::OnTranslation() {
     const qreal h_ratio = static_cast<qreal>(height()) / kBaseHeight;
     emit ResizeEvent(w_ratio, h_ratio);
 }
-//todo: add clear stacked_widget sound effect
+
 void MainWindow::OnExerciseAnswered(const bool ok) {
     if (ok) {
         exp_ += 1;
@@ -251,6 +236,11 @@ void MainWindow::OnExerciseAnswered(const bool ok) {
     QWidget *current = stacked_widget_->currentWidget();
     stacked_widget_->removeWidget(current);
     delete current;
+    if (stacked_widget_->count() == 0) {
+        QTimer::singleShot(50, this, [this]() {
+            complete_effect_.play();
+        });
+    }
 }
 
 void MainWindow::OpenDB() {

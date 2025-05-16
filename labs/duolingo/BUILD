@@ -13,6 +13,7 @@ qt_cc_library(
         "translation_exercise.h",
     ],
     data = [
+        "data/complete.wav",
         "data/correct.wav",
         "data/questions.db",
         "data/wrong.wav",

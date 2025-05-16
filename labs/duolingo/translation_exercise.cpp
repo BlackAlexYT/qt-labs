@@ -10,9 +10,10 @@
 #include <string>
 #include <QtSql/QSqlQuery>
 #include <QSoundEffect>
+#include <QSqlDatabase>
 
-TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDatabase db,
-                                         QWidget *parent) : difficult_level_(difficult_level), index_(index), db_(db) {
+TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDatabase& db,
+                                         QWidget * /*parent*/) : difficult_level_(difficult_level), db_(db) {
     question_label_ = new QLabel(this);
     question_label_->setAlignment(Qt::AlignCenter);
     answer_edit_ = new QLineEdit(this);
@@ -56,7 +57,9 @@ TranslationExercise::~TranslationExercise() {
 
 void TranslationExercise::LoadQuestion() {
     QSqlQuery select_query;
-    select_query.exec("SELECT question_id FROM "+difficulty_indices_table_names_[difficult_level_]+" ORDER BY question_id LIMIT 1");
+    select_query.exec(
+        "SELECT question_id FROM " + difficulty_indices_table_names_[difficult_level_] +
+        " ORDER BY question_id LIMIT 1");
     if (!select_query.next()) {
         QMessageBox::information(this, "Congratulation!",
                                  "There's no more questions with this difficulty! Select another difficulty");
@@ -64,11 +67,10 @@ void TranslationExercise::LoadQuestion() {
     index_ = select_query.value(0).toInt();
 
     QSqlQuery delete_query;
-    delete_query.prepare("DELETE FROM "+difficulty_indices_table_names_[difficult_level_]+" WHERE question_id = :id");
+    delete_query.prepare(
+        "DELETE FROM " + difficulty_indices_table_names_[difficult_level_] + " WHERE question_id = :id");
     delete_query.bindValue(":id", index_);
-    delete_query.exec();
-
-    {
+    delete_query.exec(); {
         QSqlQuery query;
         if (query.exec(
             "SELECT english_word, german_word from " + difficulties_[difficult_level_] + " where id == " +
