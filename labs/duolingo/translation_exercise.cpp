@@ -15,7 +15,7 @@ TranslationExercise::TranslationExercise(int difficult_level, int index, QSqlDat
                                          QWidget *parent) : difficult_level_(difficult_level), index_(index), db_(db) {
     question_label_ = new QLabel(this);
     question_label_->setAlignment(Qt::AlignCenter);
-    answer_edit_ = new QLineEdit(this); // TODO: add by pressing enter check the answer
+    answer_edit_ = new QLineEdit(this);
     submit_button_ = new QPushButton("Check", this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
