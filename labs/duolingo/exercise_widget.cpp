@@ -5,6 +5,6 @@ ExerciseWidget::ExerciseWidget(QWidget *parent) : QWidget(parent) {
 }
 
 void ExerciseWidget::OnSubmit() {
-    const bool ok = ValidateAnswer(answer_edit_->text());
+    const bool ok = ValidateAnswer();
     emit ExerciseAnswered(ok);
 }

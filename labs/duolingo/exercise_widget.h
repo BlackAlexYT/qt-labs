@@ -11,7 +11,7 @@ class ExerciseWidget : public QWidget {
 public:
     explicit ExerciseWidget(QWidget *parent = nullptr);
 
-    virtual bool ValidateAnswer(const QString &answer) = 0;
+    virtual bool ValidateAnswer() = 0;
 
     virtual ~ExerciseWidget() = default;
 
@@ -24,10 +24,11 @@ signals:
 private:
     friend class TranslationExercise;
 
+    friend class GrammarExercise;
+
     virtual void LoadQuestion() = 0;
 
     QLabel *question_label_;
-    QLineEdit *answer_edit_;
     QPushButton *submit_button_;
 };
 

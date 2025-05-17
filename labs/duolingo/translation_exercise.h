@@ -9,9 +9,9 @@ class TranslationExercise : public ExerciseWidget {
     Q_OBJECT
 
 public:
-    TranslationExercise(int difficult_level, const QSqlDatabase& db, QWidget *parent = nullptr);
+    TranslationExercise(int difficult_level, const QSqlDatabase &db, QWidget *parent = nullptr);
 
-    bool ValidateAnswer(const QString &answer) override;
+    bool ValidateAnswer() override;
 
     ~TranslationExercise() override;
 
@@ -22,6 +22,7 @@ private:
 
     void OnParentResized(double w_ratio, double h_ratio) const;
 
+    QLineEdit *answer_edit_;
     int difficult_level_{};
     int index_{};
     QString answer_;
@@ -35,4 +36,5 @@ private:
         "unanswered_translation_hard_questions"
     };
 };
-#endif
+
+#endif //TRANSLATION_EXERCISE_H

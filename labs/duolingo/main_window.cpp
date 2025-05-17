@@ -19,6 +19,7 @@
 #include <QTime>
 
 #include "exercise_widget.h"
+#include "grammar_exercise.h"
 
 
 MainWindow::MainWindow() {
@@ -90,6 +91,7 @@ void MainWindow::SetupUI() {
     complete_effect_.setSource(QUrl::fromLocalFile("labs/duolingo/data/complete.wav"));
 
     connect(translation_button_, &QPushButton::clicked, this, &MainWindow::OnTranslation);
+    connect(grammar_button_, &QPushButton::clicked, this, &MainWindow::OnGrammar);
 
 
     setMinimumSize(800, 600);
@@ -256,10 +258,13 @@ void MainWindow::OnTranslation() {
         stacked_widget_->addWidget(translation_widget);
     }
 
-    int seconds_left = 20;
+    int seconds_left = 40;
 
     timer_label_ = new QLabel(QString::number(seconds_left));
     main_layout_->addWidget(timer_label_);
+    QFont font = timer_label_->font();
+    font.setPointSize(16);
+    timer_label_->setFont(font);
 
     QTimer *countdown_timer = new QTimer;
 
@@ -287,6 +292,75 @@ void MainWindow::OnTranslation() {
         });
 
     countdown_timer->start(1000);
+
+    constexpr int kBaseWidth = 800;
+    constexpr int kBaseHeight = 600;
+
+    const qreal w_ratio = static_cast<qreal>(width()) / kBaseWidth;
+    const qreal h_ratio = static_cast<qreal>(height()) / kBaseHeight;
+    emit ResizeEvent(w_ratio, h_ratio);
+}
+
+void MainWindow::OnGrammar() {
+    if (stacked_widget_->count() != 0) {
+        return;
+    }
+
+    translation_button_->hide();
+    grammar_button_->hide();
+
+    not_in_task_ = false;
+
+
+    GrammarExercise *grammar_widget = new GrammarExercise(
+        difficult_level_, db_);
+    stacked_widget_->addWidget(grammar_widget);
+    connect(this, &MainWindow::ResizeEvent,
+            grammar_widget, &GrammarExercise::OnParentResized);
+    // for (int i = 0; i < 5; ++i) {
+    //     TranslationExercise *translation_widget = new TranslationExercise(
+    //         difficult_level_, db_);
+    //     connect(translation_widget, &ExerciseWidget::ExerciseAnswered,
+    //             this, &MainWindow::OnExerciseAnswered);
+    //     connect(this, &MainWindow::ResizeEvent,
+    //             translation_widget, &TranslationExercise::OnParentResized);
+    //     stacked_widget_->addWidget(translation_widget);
+    // }
+    //
+    // int seconds_left = 40;
+    //
+    // timer_label_ = new QLabel(QString::number(seconds_left));
+    // main_layout_->addWidget(timer_label_);
+    // QFont font = timer_label_->font();
+    // font.setPointSize(16);
+    // timer_label_->setFont(font);
+    //
+    // QTimer *countdown_timer = new QTimer;
+    //
+    // QMetaObject::Connection conn;
+    // conn = connect(
+    //     countdown_timer, &QTimer::timeout, this,
+    //     [&conn, countdown_timer, this, seconds_left]() mutable {
+    //         seconds_left--;
+    //         timer_label_->setText(QString::number(seconds_left));
+    //         if (seconds_left <= 0 || not_in_task_ || stacked_widget_->count() == 0) {
+    //             countdown_timer->stop();
+    //             main_layout_->removeWidget(timer_label_);
+    //             timer_label_->hide();
+    //             while (stacked_widget_->count() != 0) {
+    //                 QWidget *current = stacked_widget_->currentWidget();
+    //                 stacked_widget_->removeWidget(current);
+    //             }
+    //             translation_button_->show();
+    //             grammar_button_->show();
+    //             QMessageBox::information(this, "Complete",
+    //                                      "The exercise completed. You answered on " + QString::number(correct_answer_) +
+    //                                      "/5 questions correctly");
+    //             correct_answer_ = 0;
+    //         }
+    //     });
+    //
+    // countdown_timer->start(1000);
 
     constexpr int kBaseWidth = 800;
     constexpr int kBaseHeight = 600;

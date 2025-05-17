@@ -4,11 +4,13 @@ qt_cc_library(
     name = "libs",
     srcs = [
         "exercise_widget.cpp",
+        "grammar_exercise.cpp",
         "main_window.cpp",
         "translation_exercise.cpp",
     ],
     hdrs = [
         "exercise_widget.h",
+        "grammar_exercise.h",
         "main_window.h",
         "translation_exercise.h",
     ],

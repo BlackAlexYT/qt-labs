@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H_
-#define MAIN_WINDOW_H_
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include <QLabel>
 #include <QMainWindow>
@@ -24,6 +24,8 @@ public:
 
 private slots:
     void OnTranslation();
+
+    void OnGrammar();
 
     void OnExerciseAnswered(bool ok);
 
@@ -68,5 +70,4 @@ private:
     QSqlDatabase db_;
 };
 
-
-#endif
+#endif //MAIN_WINDOW_H_

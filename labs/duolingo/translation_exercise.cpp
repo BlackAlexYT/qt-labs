@@ -62,7 +62,7 @@ TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDa
     TranslationExercise::LoadQuestion();
 }
 
-bool TranslationExercise::ValidateAnswer(const QString &answer) {
+bool TranslationExercise::ValidateAnswer() {
     return answer_.toLower() == answer_edit_->text().toLower();
     // TODO: half points for wrong article.
 }
@@ -107,9 +107,9 @@ void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_rat
         question_label_->setFont(label_font);
     } {
         const int font_size = static_cast<int>(16 * h_ratio);
-        QFont label_font = answer_edit_->font();
-        label_font.setPointSize(font_size);
-        answer_edit_->setFont(label_font);
+        QFont edit_font = answer_edit_->font();
+        edit_font.setPointSize(font_size);
+        answer_edit_->setFont(edit_font);
     } {
         const int font_size = static_cast<int>(20 * h_ratio);
         submit_button_->setStyleSheet("QPushButton {"
