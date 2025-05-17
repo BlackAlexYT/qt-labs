@@ -1,4 +1,4 @@
-#include "../../labs/duolingo/translation_exercise.h"
+#include "translation_exercise.h"
 
 #include <qdialogbuttonbox.h>
 #include <QWidget>
@@ -8,7 +8,6 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <qurl.h>
-#include <string>
 #include <QtSql/QSqlQuery>
 #include <QSoundEffect>
 #include <QSqlDatabase>
@@ -27,9 +26,35 @@ TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDa
     setLayout(layout);
 
     question_label_->setStyleSheet("color: white;");
-    answer_edit_->setStyleSheet("background-color: white; color: purple; border: 1px solid purple; padding: 5px;");
-    submit_button_->setStyleSheet(
-        "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: 16px;");
+    answer_edit_->setStyleSheet(R"(
+    QLineEdit {
+        background-color: white;
+        color: purple;
+        border: 1px solid purple;
+        border-radius: 8px;
+        padding: 5px;
+    }
+    QLineEdit:focus {
+        border: 2px solid #aa00ff;
+    }
+    QLineEdit:hover {
+        background-color: #f9f9f9;
+    }
+    )");
+    submit_button_->setStyleSheet("QPushButton {"
+        "background-color: #FFC0CB;"
+        "color: white;"
+        "border: none;"
+        "border-radius: 12px;"
+        "padding: 10px 20px;"
+        "font-size: 16px;"
+        "}"
+        "QPushButton:hover {"
+        "background-color: #FFB6C1;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: #FF69B4;"
+        "}");
 
     connect(submit_button_, &QPushButton::clicked, this, &ExerciseWidget::OnSubmit);
     connect(answer_edit_, &QLineEdit::returnPressed, this, &ExerciseWidget::OnSubmit);
@@ -87,9 +112,20 @@ void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_rat
         answer_edit_->setFont(label_font);
     } {
         const int font_size = static_cast<int>(20 * h_ratio);
-        submit_button_->setStyleSheet(
-            "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: " +
-            QString::number(font_size) + "px;");
+        submit_button_->setStyleSheet("QPushButton {"
+                                      "background-color: #FFC0CB;"
+                                      "color: white;"
+                                      "border: none;"
+                                      "border-radius: 12px;"
+                                      "padding: 10px 20px;"
+                                      "font-size: " + QString::number(font_size) + "px;"
+                                      "}"
+                                      "QPushButton:hover {"
+                                      "background-color: #FFB6C1;"
+                                      "}"
+                                      "QPushButton:pressed {"
+                                      "background-color: #FF69B4;"
+                                      "}");
     }
 }
 

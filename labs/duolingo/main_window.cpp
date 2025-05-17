@@ -78,7 +78,6 @@ void MainWindow::SetupUI() {
     main_layout_->setContentsMargins(20, 20, 20, 20);
     main_layout_->setSpacing(20);
 
-    //todo: tut taimer
     main_layout_->addLayout(top_layout);
     main_layout_->addStretch(1);
     main_layout_->addWidget(learn_german_label_, 0, Qt::AlignCenter);
@@ -259,7 +258,7 @@ void MainWindow::OnTranslation() {
                                          "The exercise completed. You answered on " + QString::number(correct_answer_) +
                                          "/5 questions correctly");
                 correct_answer_ = 0;
-                disconnect(conn);
+                QObject::disconnect(conn);
             }
         });
 
