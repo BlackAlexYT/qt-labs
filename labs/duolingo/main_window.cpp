@@ -258,7 +258,6 @@ void MainWindow::OnTranslation() {
                                          "The exercise completed. You answered on " + QString::number(correct_answer_) +
                                          "/5 questions correctly");
                 correct_answer_ = 0;
-                QObject::disconnect(conn);
             }
         });
 
