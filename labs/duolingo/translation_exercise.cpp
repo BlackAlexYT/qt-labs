@@ -56,8 +56,8 @@ TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDa
         "background-color: #FF69B4;"
         "}");
 
-    connect(submit_button_, &QPushButton::clicked, this, &ExerciseWidget::OnSubmit);
-    connect(answer_edit_, &QLineEdit::returnPressed, this, &ExerciseWidget::OnSubmit);
+    connect(submit_button_, &QPushButton::clicked, this, &TranslationExercise::OnSubmit);
+    connect(answer_edit_, &QLineEdit::returnPressed, this, &TranslationExercise::OnSubmit);
 
     TranslationExercise::LoadQuestion();
 }
@@ -126,19 +126,5 @@ void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_rat
                                       "QPushButton:pressed {"
                                       "background-color: #FF69B4;"
                                       "}");
-    }
-}
-
-void TranslationExercise::ShowMessageBox() {
-    if (answer_.toLower() == answer_edit_->text().toLower()) {
-        QSoundEffect effect;
-        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/correct.wav"));
-        effect.play();
-        QMessageBox::information(this, "Correct!", "Your answer is correct!");
-    } else {
-        QSoundEffect effect;
-        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/wrong.wav"));
-        effect.play();
-        QMessageBox::critical(this, "Wrong!", "Your answer is wrong! The right answer is " + answer_);
     }
 }

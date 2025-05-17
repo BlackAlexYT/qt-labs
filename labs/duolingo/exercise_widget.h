@@ -26,10 +26,15 @@ private:
 
     friend class GrammarExercise;
 
+    friend class MainWindow;
+
+    void ShowMessageBox();
+
     virtual void LoadQuestion() = 0;
 
     QLabel *question_label_;
     QPushButton *submit_button_;
+    QString answer_;
 };
 
 #endif

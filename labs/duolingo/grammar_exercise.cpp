@@ -1,6 +1,9 @@
 #include "grammar_exercise.h"
 
 #include <QButtonGroup>
+#include <QMessageBox>
+#include <QSoundEffect>
+#include <QSqlQuery>
 #include <QVBoxLayout>
 
 GrammarExercise::GrammarExercise(const int difficult_level, const QSqlDatabase &db, QWidget *parent) : difficult_level_(
@@ -11,12 +14,12 @@ GrammarExercise::GrammarExercise(const int difficult_level, const QSqlDatabase &
     option_2_ = new QRadioButton(this);
     option_3_ = new QRadioButton(this);
     option_4_ = new QRadioButton(this);
-    QButtonGroup *options_group = new QButtonGroup(this);
-    options_group->addButton(option_1_);
-    options_group->addButton(option_2_);
-    options_group->addButton(option_3_);
-    options_group->addButton(option_4_);
-    options_group->setExclusive(true);
+    options_group_ = new QButtonGroup(this);
+    options_group_->addButton(option_1_, 1);
+    options_group_->addButton(option_2_, 2);
+    options_group_->addButton(option_3_, 3);
+    options_group_->addButton(option_4_, 4);
+    options_group_->setExclusive(true);
     submit_button_ = new QPushButton("Check", this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -84,15 +87,13 @@ GrammarExercise::GrammarExercise(const int difficult_level, const QSqlDatabase &
         }
     )");
 
-    question_label_->setText("Test");
-    option_1_->setText("Test1");
-    option_2_->setText("Test2");
-    option_3_->setText("Test3");
-    option_4_->setText("Test4");
+    connect(submit_button_, &QPushButton::clicked, this, &GrammarExercise::OnSubmit);
+
+    GrammarExercise::LoadQuestion();
 }
 
 void GrammarExercise::OnParentResized(double /*w_ratio*/, const double h_ratio) const { {
-        const int font_size = static_cast<int>(48 * h_ratio);
+        const int font_size = static_cast<int>(36 * h_ratio);
         QFont label_font = question_label_->font();
         label_font.setPointSize(font_size);
         question_label_->setFont(label_font);
@@ -153,8 +154,54 @@ GrammarExercise::~GrammarExercise() {
 }
 
 bool GrammarExercise::ValidateAnswer() {
-    return true;
+    return options_group_->checkedId() == answer_index_;
 }
 
 void GrammarExercise::LoadQuestion() {
+    QSqlQuery select_query;
+    select_query.exec(
+        "SELECT question_id FROM " + difficulty_indices_table_names_[difficult_level_] +
+        " ORDER BY question_id LIMIT 1");
+    if (!select_query.next()) {
+        QMessageBox::information(this, "Congratulation!",
+                                 "There's no more questions with this difficulty! Select another difficulty");
+    }
+    index_ = select_query.value(0).toInt();
+
+    QSqlQuery delete_query;
+    delete_query.prepare(
+        "DELETE FROM " + difficulty_indices_table_names_[difficult_level_] + " WHERE question_id = :id");
+    delete_query.bindValue(":id", index_);
+    delete_query.exec(); {
+        QSqlQuery query;
+        if (query.exec(
+            "SELECT task, options1, options2, options3, options4, answer, rule from " + difficulties_[difficult_level_]
+            + " where id == " +
+            QString::number(index_) + ";")) {
+            while (query.next()) {
+                const QString task = query.value(0).toString();
+                const QString option1 = query.value(1).toString();
+                const QString option2 = query.value(2).toString();
+                const QString option3 = query.value(3).toString();
+                const QString option4 = query.value(4).toString();
+                answer_index_ = query.value(5).toString().toInt();
+                switch (answer_index_) {
+                    case 1:
+                        answer_ = option1;
+                    case 2:
+                        answer_ = option2;
+                    case 3:
+                        answer_ = option3;
+                    case 4:
+                        answer_ = option4;
+                }
+                rule_name_ = query.value(6).toString();
+                question_label_->setText(task);
+                option_1_->setText(option1);
+                option_2_->setText(option2);
+                option_3_->setText(option3);
+                option_4_->setText(option4);
+            }
+        }
+    }
 }

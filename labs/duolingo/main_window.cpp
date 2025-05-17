@@ -13,10 +13,11 @@
 #include <QSoundEffect>
 #include <qobjectdefs.h>
 #include <qtmetamacros.h>
-#include <qurl.h>
+#include <QUrl>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QTime>
+#include <QDebug>
 
 #include "exercise_widget.h"
 #include "grammar_exercise.h"
@@ -316,20 +317,20 @@ void MainWindow::OnGrammar() {
     not_in_task_ = false;
 
 
-    GrammarExercise *grammar_widget = new GrammarExercise(
-        difficult_level_, db_);
-    stacked_widget_->addWidget(grammar_widget);
-    connect(this, &MainWindow::ResizeEvent,
-            grammar_widget, &GrammarExercise::OnParentResized);
-    // for (int i = 0; i < 5; ++i) {
-    //     TranslationExercise *translation_widget = new TranslationExercise(
-    //         difficult_level_, db_);
-    //     connect(translation_widget, &ExerciseWidget::ExerciseAnswered,
-    //             this, &MainWindow::OnExerciseAnswered);
-    //     connect(this, &MainWindow::ResizeEvent,
-    //             translation_widget, &TranslationExercise::OnParentResized);
-    //     stacked_widget_->addWidget(translation_widget);
-    // }
+    // GrammarExercise *grammar_widget = new GrammarExercise(
+    //     difficult_level_, db_);
+    // stacked_widget_->addWidget(grammar_widget);
+    // connect(this, &MainWindow::ResizeEvent,
+    //         grammar_widget, &GrammarExercise::OnParentResized);
+    for (int i = 0; i < 5; ++i) {
+        GrammarExercise *grammar_widget = new GrammarExercise(
+            difficult_level_, db_);
+        connect(grammar_widget, &ExerciseWidget::ExerciseAnswered,
+                this, &MainWindow::OnExerciseAnswered);
+        connect(this, &MainWindow::ResizeEvent,
+                grammar_widget, &GrammarExercise::OnParentResized);
+        stacked_widget_->addWidget(grammar_widget);
+    }
     //
     // int seconds_left = 40;
     //
@@ -375,12 +376,13 @@ void MainWindow::OnGrammar() {
 }
 
 void MainWindow::OnExerciseAnswered(const bool ok) {
+    qDebug() << 1;
     if (ok) {
         exp_ += 1;
         correct_answer_++;
         UpdateEXP();
     }
-    qobject_cast<TranslationExercise *>(stacked_widget_->currentWidget())->ShowMessageBox();
+    qobject_cast<ExerciseWidget*>(stacked_widget_->currentWidget())->ShowMessageBox();
     QWidget *current = stacked_widget_->currentWidget();
     stacked_widget_->removeWidget(current);
 }

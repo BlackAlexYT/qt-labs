@@ -15,7 +15,7 @@ public:
 
     ~GrammarExercise() override;
 
-    void ShowMessageBox();
+    // void ShowMessageBox();
 
     // void ShowHintBox();
 
@@ -32,13 +32,15 @@ private:
     QRadioButton* option_2_;
     QRadioButton* option_3_;
     QRadioButton* option_4_;
+    QButtonGroup *options_group_;
+    QString rule_name_;
     QSqlDatabase db_;
     std::vector<QString> difficulties_{
         "grammar_questions_easy", "grammar_questions_medium", "grammar_questions_hard"
     };
     std::vector<QString> difficulty_indices_table_names_{
-        "unanswered_questions_easy_questions", "unanswered_questions_medium_questions",
-        "unanswered_questions_hard_questions"
+        "unanswered_grammar_easy_questions", "unanswered_grammar_medium_questions",
+        "unanswered_grammar_hard_questions"
     };
 };
 

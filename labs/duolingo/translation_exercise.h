@@ -15,7 +15,7 @@ public:
 
     ~TranslationExercise() override;
 
-    void ShowMessageBox();
+    // void ShowMessageBox();
 
 private:
     void LoadQuestion() override;
@@ -25,7 +25,6 @@ private:
     QLineEdit *answer_edit_;
     int difficult_level_{};
     int index_{};
-    QString answer_;
     friend class MainWindow;
     QSqlDatabase db_;
     std::vector<QString> difficulties_{
