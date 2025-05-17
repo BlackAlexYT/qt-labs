@@ -283,7 +283,11 @@ void MainWindow::OnTranslation() {
                     stacked_widget_->removeWidget(current);
                 }
                 translation_button_->show();
-                grammar_button_->show();
+                grammar_button_->show();if (stacked_widget_->count() == 0) {
+                    QTimer::singleShot(50, this, [this]() {
+                        complete_effect_.play();
+                    });
+                }
                 QMessageBox::information(this, "Complete",
                                          "The exercise completed. You answered on " + QString::number(correct_answer_) +
                                          "/5 questions correctly");
@@ -379,11 +383,6 @@ void MainWindow::OnExerciseAnswered(const bool ok) {
     qobject_cast<TranslationExercise *>(stacked_widget_->currentWidget())->ShowMessageBox();
     QWidget *current = stacked_widget_->currentWidget();
     stacked_widget_->removeWidget(current);
-    if (stacked_widget_->count() == 0) {
-        QTimer::singleShot(50, this, [this]() {
-            complete_effect_.play();
-        });
-    }
 }
 
 void MainWindow::OpenDB() {
