@@ -132,9 +132,34 @@ void MainWindow::ApplyStyles() const {
     )";
 
     translation_button_->setStyleSheet(
-        "QPushButton { background-color: #cc66ff; color: white; padding: 8px 1px; border-radius: 8px; } QPushButton:hover { background-color: #dd88ff; }");
+        "QPushButton { "
+        "  background-color: #cc66ff; "
+        "  color: white; "
+        "  padding: 8px 1px; "
+        "  border-radius: 8px; "
+        "} "
+        "QPushButton:hover { "
+        "  background-color: #dd88ff; "
+        "} "
+        "QPushButton:pressed { "
+        "  background-color: #bb55dd; "
+        "}"
+    );
+
     grammar_button_->setStyleSheet(
-        "QPushButton { background-color: #ff99cc; color: white; padding: 8px 1px; border-radius: 8px; } QPushButton:hover { background-color: #ffaadf; }");
+        "QPushButton { "
+        "  background-color: #ff99cc; "
+        "  color: white; "
+        "  padding: 8px 1px; "
+        "  border-radius: 8px; "
+        "} "
+        "QPushButton:hover { "
+        "  background-color: #ffaadf; "
+        "} "
+        "QPushButton:pressed { "
+        "  background-color: #ee88b8; "
+        "}"
+    );
 
     central_widget_->setObjectName("centralWidget");
     central_widget_->setStyleSheet(bg_style + circle_style + bar_style + label_style);
