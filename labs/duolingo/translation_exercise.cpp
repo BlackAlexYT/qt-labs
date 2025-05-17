@@ -7,12 +7,13 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <qurl.h>
 #include <string>
 #include <QtSql/QSqlQuery>
 #include <QSoundEffect>
 #include <QSqlDatabase>
 
-TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDatabase& db,
+TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDatabase &db,
                                          QWidget * /*parent*/) : difficult_level_(difficult_level), db_(db) {
     question_label_ = new QLabel(this);
     question_label_->setAlignment(Qt::AlignCenter);
@@ -37,17 +38,6 @@ TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDa
 }
 
 bool TranslationExercise::ValidateAnswer(const QString &answer) {
-    if (answer_.toLower() == answer_edit_->text().toLower()) {
-        QSoundEffect effect;
-        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/correct.wav"));
-        effect.play();
-        QMessageBox::information(this, "Correct!", "Your answer is correct!");
-    } else {
-        QSoundEffect effect;
-        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/wrong.wav"));
-        effect.play();
-        QMessageBox::critical(this, "Wrong!", "Your answer is wrong! The right answer is " + answer_);
-    }
     return answer_.toLower() == answer_edit_->text().toLower();
     // TODO: half points for wrong article.
 }
@@ -86,7 +76,7 @@ void TranslationExercise::LoadQuestion() {
 }
 
 void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_ratio) const { {
-        const int font_size = static_cast<int>(36 * h_ratio);
+        const int font_size = static_cast<int>(48 * h_ratio);
         QFont label_font = question_label_->font();
         label_font.setPointSize(font_size);
         question_label_->setFont(label_font);
@@ -100,5 +90,19 @@ void TranslationExercise::OnParentResized(double /*w_ratio*/, const double h_rat
         submit_button_->setStyleSheet(
             "background-color: #FFC0CB; color: white; border: none; padding: 10px 20px; font-size: " +
             QString::number(font_size) + "px;");
+    }
+}
+
+void TranslationExercise::ShowMessageBox() {
+    if (answer_.toLower() == answer_edit_->text().toLower()) {
+        QSoundEffect effect;
+        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/correct.wav"));
+        effect.play();
+        QMessageBox::information(this, "Correct!", "Your answer is correct!");
+    } else {
+        QSoundEffect effect;
+        effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/wrong.wav"));
+        effect.play();
+        QMessageBox::critical(this, "Wrong!", "Your answer is wrong! The right answer is " + answer_);
     }
 }

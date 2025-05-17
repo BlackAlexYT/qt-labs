@@ -15,6 +15,8 @@ public:
 
     ~TranslationExercise() override;
 
+    void ShowMessageBox();
+
 private:
     void LoadQuestion() override;
 
