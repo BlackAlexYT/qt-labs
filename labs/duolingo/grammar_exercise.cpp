@@ -210,7 +210,7 @@ void GrammarExercise::LoadQuestion() {
     } {
         QSqlQuery query;
         if (query.exec(
-            "SELECT rule from rules where topic == '" + rule_name_+"'")) {
+            "SELECT rule from rules where topic == '" + rule_name_ + "'")) {
             while (query.next()) {
                 hint_ = query.value(0).toString();
             }
@@ -220,5 +220,5 @@ void GrammarExercise::LoadQuestion() {
 
 void GrammarExercise::ShowHintBox() {
     QMessageBox::information(this, "Help",
-                         rule_name_+": "+hint_);
+                             rule_name_ + ": " + hint_);
 }
