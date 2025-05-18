@@ -17,9 +17,8 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QTime>
-#include <QDebug>
 
-#include "exercise_widget.h"
+#include "translation_exercise.h"
 #include "grammar_exercise.h"
 
 
@@ -34,6 +33,13 @@ MainWindow::MainWindow() {
 void MainWindow::SetupMenu() {
     QMenu *settings_menu = menuBar()->addMenu("Settings");
     QAction *difficulty_action = settings_menu->addAction("Select Difficulty");
+    difficulty_action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
+
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+    QAction *hintAction = helpMenu->addAction("Show &Hint");
+    hintAction->setShortcut(QKeySequence(Qt::Key_H));
+
+    connect(hintAction, &QAction::triggered, this, &MainWindow::CallHint);
     connect(difficulty_action, &QAction::triggered, this, &MainWindow::OnSelectDifficulty);
 }
 
@@ -342,7 +348,6 @@ void MainWindow::OnGrammar() {
 }
 
 void MainWindow::OnExerciseAnswered(const bool ok) {
-    qDebug() << 1;
     if (ok) {
         exp_ += 1;
         correct_answer_++;
@@ -375,4 +380,10 @@ void MainWindow::SaveUserData() {
     query.bindValue(":xp", exp_);
     query.bindValue(":id", 1);
     query.exec();
+}
+
+void MainWindow::CallHint() {
+    if (const auto grammar = qobject_cast<GrammarExercise *>(stacked_widget_->currentWidget())) {
+        grammar->ShowHintBox();
+    }
 }

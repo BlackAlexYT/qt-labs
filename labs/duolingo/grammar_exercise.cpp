@@ -205,8 +205,20 @@ void GrammarExercise::LoadQuestion() {
                 option_2_->setText(option2);
                 option_3_->setText(option3);
                 option_4_->setText(option4);
-                qDebug() << "Answer: " << answer_index_ << answer_;
+            }
+        }
+    } {
+        QSqlQuery query;
+        if (query.exec(
+            "SELECT rule from rules where topic == '" + rule_name_+"'")) {
+            while (query.next()) {
+                hint_ = query.value(0).toString();
             }
         }
     }
+}
+
+void GrammarExercise::ShowHintBox() {
+    QMessageBox::information(this, "Help",
+                         rule_name_+": "+hint_);
 }

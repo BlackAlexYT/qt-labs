@@ -50,6 +50,8 @@ private:
 
     void SaveUserData();
 
+    void CallHint();
+
     void StartTimer();
 
     QWidget *central_widget_;

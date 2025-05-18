@@ -143,3 +143,10 @@ WITH RECURSIVE cnt(x) AS (
     SELECT x + 1 FROM cnt WHERE x < 90
 )
 SELECT x FROM cnt;
+
+CREATE TABLE IF NOT EXISTS rules
+(
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic TEXT NOT NULL,
+    rule TEXT NOT NULL
+)

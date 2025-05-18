@@ -23,6 +23,5 @@ void ExerciseWidget::ShowMessageBox() {
         effect.setSource(QUrl::fromLocalFile("labs/duolingo/data/wrong.wav"));
         effect.play();
         QMessageBox::critical(this, "Wrong!", "Your answer is wrong! The right answer is " + answer_);
-        qDebug() << answer_;
     }
 }

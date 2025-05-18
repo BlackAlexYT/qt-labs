@@ -15,9 +15,8 @@ public:
 
     ~GrammarExercise() override;
 
-    // void ShowMessageBox();
-
-    // void ShowHintBox();
+public slots:
+    void ShowHintBox();
 
 private:
     void LoadQuestion() override;
@@ -28,12 +27,13 @@ private:
     int index_{};
     int answer_index_;
     friend class MainWindow;
-    QRadioButton* option_1_;
-    QRadioButton* option_2_;
-    QRadioButton* option_3_;
-    QRadioButton* option_4_;
+    QRadioButton *option_1_;
+    QRadioButton *option_2_;
+    QRadioButton *option_3_;
+    QRadioButton *option_4_;
     QButtonGroup *options_group_;
     QString rule_name_;
+    QString hint_;
     QSqlDatabase db_;
     std::vector<QString> difficulties_{
         "grammar_questions_easy", "grammar_questions_medium", "grammar_questions_hard"

@@ -64,7 +64,6 @@ TranslationExercise::TranslationExercise(const int difficult_level, const QSqlDa
 
 bool TranslationExercise::ValidateAnswer() {
     return answer_.toLower() == answer_edit_->text().toLower();
-    // TODO: half points for wrong article.
 }
 
 TranslationExercise::~TranslationExercise() {
