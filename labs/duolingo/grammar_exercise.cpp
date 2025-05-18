@@ -188,12 +188,16 @@ void GrammarExercise::LoadQuestion() {
                 switch (answer_index_) {
                     case 1:
                         answer_ = option1;
+                        break;
                     case 2:
                         answer_ = option2;
+                        break;
                     case 3:
                         answer_ = option3;
+                        break;
                     case 4:
                         answer_ = option4;
+                        break;
                 }
                 rule_name_ = query.value(6).toString();
                 question_label_->setText(task);
@@ -201,6 +205,7 @@ void GrammarExercise::LoadQuestion() {
                 option_2_->setText(option2);
                 option_3_->setText(option3);
                 option_4_->setText(option4);
+                qDebug() << "Answer: " << answer_index_ << answer_;
             }
         }
     }

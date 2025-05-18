@@ -50,6 +50,8 @@ private:
 
     void SaveUserData();
 
+    void StartTimer();
+
     QWidget *central_widget_;
     QLabel *level_circle_;
     QLabel *learn_german_label_;
